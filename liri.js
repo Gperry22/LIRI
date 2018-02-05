@@ -1,3 +1,5 @@
+// import { log } from "util";
+
 require("dotenv").config();
 
 var keys = require("./keys.js");
@@ -77,7 +79,7 @@ function getTweets() {
     });
 }
 
-
+//Spotify Function 
 function getSong() {
     var songToSearch = process.argv[3];
     if (!songToSearch) {
@@ -86,21 +88,29 @@ function getSong() {
     spotKeys.search({
         type: "track",
         query: songToSearch,
-        limit: 10
+        limit: 15
     }, function (err, data) {
         if (err) {
             return console.log("Error occurred: " + err);
         }
-        console.log(data.tracks.items);
-        console.log(data.tracks.items[0].artists);
-
-        for (let i = 0; i < 10; i++) {
+        // console.log(data.tracks.items);
+        // console.log(data.tracks.items[0].artists);
+        for (let i = 0; i < 15; i++) {
             var songInfo = data.tracks.items;
-            var artistInfo = data.tracks.items[0].artists[0].name;
+            var artistArrayDataResponse = data.tracks.items[0].artists;
+            var artistFoundInDataResponse = [];
             var songUrl = "";
             if (songInfo[i].preview_url === null) {
                 songUrl = "There is no Preview URL!";
             } else songUrl = songInfo[i].preview_url;
+            
+            for (let j = 0; j < artistArrayDataResponse.length; j++) {
+                if (artistArrayDataResponse[j].hasOwnProperty("name")) {
+                    artistFoundInDataResponse.push(artistArrayDataResponse[j].name)
+                }
+            };
+            var artistInfo = artistFoundInDataResponse;
+
             var songResults =
                 "********************************************************************** \n\n" +
                 "Artist: " + artistInfo + "\n\n" +
@@ -111,8 +121,7 @@ function getSong() {
     });
 }
 
-
-
+//OMDB Function
 function getMovie() {
     var movieToSearch = process.argv[3];
     if (!movieToSearch) {
