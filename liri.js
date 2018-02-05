@@ -9,6 +9,7 @@ var liriArguement = process.argv[2];
 
 var spotKeys = new Spotify(keys.spotify);
 var twitKeys = new Twitter(keys.twitter);
+// var omdbKeys = new OMDB(keys.omdb);
 
 switch (liriArguement) {
     case "my-tweets":
@@ -40,6 +41,7 @@ switch (liriArguement) {
         );
 }
 
+
 // Tweet function, uses the Twitter module to call the Twitter api
 function getTweets() {
     // var client = new Twitter({
@@ -63,11 +65,11 @@ function getTweets() {
     ) {
         if (!error) {
             console.log(`The Latest 20 Tweets for ${twitterUsername} are\n`);
-            
+
             for (let i = 0; i < 20; i++) {
                 var tweet =
                     "********************************** \n\n" +
-                    "DATE: " + tweets[i].created_at +"\n" +
+                    "DATE: " + tweets[i].created_at + "\n" +
                     "TWEET: " + tweets[i].text + "\n";
                 console.log(tweet);
             }
@@ -75,7 +77,7 @@ function getTweets() {
     });
 }
 
-Get 
+
 function getSong() {
     var songToSearch = process.argv[3];
     if (!songToSearch) {
@@ -85,7 +87,7 @@ function getSong() {
         type: "track",
         query: songToSearch,
         limit: 10
-    },function (err, data) {
+    }, function (err, data) {
         if (err) {
             return console.log("Error occurred: " + err);
         }
@@ -102,9 +104,43 @@ function getSong() {
             var songResults =
                 "********************************************************************** \n\n" +
                 "Artist: " + artistInfo + "\n\n" +
-                "Album: " + songInfo[i].name +"\n\n" +
+                "Album: " + songInfo[i].name + "\n\n" +
                 "Preview Url: " + songUrl;
             console.log(songResults);
         }
+    });
+}
+
+
+
+function getMovie() {
+    var movieToSearch = process.argv[3];
+    if (!movieToSearch) {
+        movieToSearch = "Mr. Nobody";
+    }
+    var queryUrl = "http://www.omdbapi.com/?i=tt3896198&t=" + movieToSearch + "&apikey=54cc6259";
+    request(queryUrl, function (error, response, body) {
+
+        if (!error && response.statusCode === 200) {
+            var mRes = JSON.parse(body)
+            var rottenTomatoesRating = "";
+            console.log("body:", mRes);
+            if (mRes.hasOwnProperty(mRes.Ratings[1])) {
+                rottenTomatoesRating = mRes.Ratings[1].Value;
+            } else rottenTomatoesRating = "No Rotten Tomatoes Rating Found";
+            var movieOutput =
+                "TITLE: " + mRes.Title + "\n\n" +
+                "YEAR: " + mRes.Year + "\n\n" +
+                "IMDB RATING: " + mRes.imdbRating + "\n\n" +
+                "ROTTEN TOMATOES RATING: " + rottenTomatoesRating + "\n\n" +
+                "COUNTRY: " + mRes.Country + "\n\n" +
+                "LANGUAGE: " + mRes.Language + "\n\n" +
+                "PLOT: " + mRes.Plot + "\n\n" +
+                "ACTORS: " + mRes.Actors + "\n\n" +
+                "AWARDS: " + mRes.Awards + "\n\n" +
+                "--------------------------------------------------------";
+            console.log(movieOutput);
+        } else
+            console.log("error:", error, response.statusCode); // Print the error if one occurred
     });
 }
