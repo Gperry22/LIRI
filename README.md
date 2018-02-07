@@ -1,25 +1,39 @@
-# **Instructions**
+# **LIRI**
 
-* Make a dogs object with three keys...
+* Display's Tweets, Spotify's Songs, Looks up Movies and Writes searches to a log.txt
 
-  * First key called "raining" with a value of true
+* LIRI utilizes Node.js and NPM packages:
 
-* Second key called "noise" with a value of "Woof!"
+   * [Twitter](https://www.npmjs.com/package/twitter)
+   
+   * [Spotify](https://www.npmjs.com/package/node-spotify-api)
+   
+   * [Request](https://www.npmjs.com/package/request)
 
-* Third key called "makeNoise" which contains a function which console.logs the noise to the screen if it is raining dogs
+     * You'll use Request to grab data from the [OMDB API](http://www.omdbapi.com).
 
-* Make a cats object with three keys...
+   * [DotEnv](https://www.npmjs.com/package/dotenv)
 
-  * First key called "raining" with a value of false
+* To run liri:
 
-  * Second key called "noise" with a value of "Meow!"
+* Try typing one of the following commands after 'node liri.js' : 
 
-  * Third key called "makeNoise" which contains a function which console.logs the noise to the screen if it is raining cats
+* 1. my-tweets  and 'any twitter name'. The default Twitter is @Philadelphia Eagles 
 
-* Make the dog bark
+* 2. spotify-this-song  and 'any song name'. The default Song is Unforgettable by French Montana & Swae Lee. 
 
-* Make the cat meow
+* 3. movie-this  and 'any movie name'. The default Movie is Mr. Nobody. 
 
-* BONUS: Create a function called "massHysteria" which takes in both the cats and the dogs object and prints "DOGS AND CATS LIVING TOGETHER! MASS HYSTERIA!" if both of the `raining` keys are equal to true.
+* 4. do-what-it-says.  Get's Backstreet Boys song 'I Want It That Way' from text file and Spotify's It.
+*   "All searches are appended (written) to a log.txt file"
 
-* BONUS: Look to see if you can find any means to simplify your code further and further
+* Be sure to put the movie or song name in quotation marks if it's more than one word.
+
+
+![Liri Data Flow](/images/liri.jpg)
+![](/images.1.png)
+![](/images.2.png)
+![](/images.3.png)
+![](/images.4.png)
+
+
