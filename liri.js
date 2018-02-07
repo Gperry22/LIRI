@@ -1,5 +1,4 @@
 // import { log } from "util";
-
 require("dotenv").config();
 
 var keys = require("./keys.js");
@@ -76,7 +75,6 @@ function getTweets() {
 }
 
 
-
 //Spotify Function 
 function getSong(songFromTxtFile) {
     var songToSearch = songEntered;
@@ -122,6 +120,7 @@ function getSong(songFromTxtFile) {
     });
 }
 
+
 //OMDB Function
 function getMovie() {
     var movieToSearch = process.argv[3];
@@ -156,20 +155,13 @@ function getMovie() {
     });
 }
 
+
 //Read from Txt file function
 function doWhatItSays() {
-    // This block of code will read from the "random.txt" file.
-    // It's important to include the "utf8" parameter or the code will provide stream data (garbage)
-    // The code will store the contents of the reading inside the variable "data"
     fs.readFile("./random.txt", "utf8", function (error, data) {
-
-        // If the code experiences any errors it will log the error to the console.
         if (error) {
             return console.log(error);
         }
-        // We will then print the contents of data
-        // console.log(data);
-        // Then split it by commas (to make it more readable)
         var dataArr = data.split(",");
         var songFromTxtFile = dataArr[1];
         // console.log(songFromTxtFile);
@@ -178,17 +170,11 @@ function doWhatItSays() {
 }
 
 
-
-
 // Log to log.txt file
-
 function logdata(data) {
-
     fs.appendFile("log.txt", data, function (error) {
-
         if (error) {
             console.log(error);
         }
-
     })
 }
