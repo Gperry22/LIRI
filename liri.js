@@ -1,4 +1,3 @@
-// import { log } from "util";
 require("dotenv").config();
 
 var keys = require("./keys.js");
@@ -40,7 +39,9 @@ switch (liriArguement) {
             "\r\n\n" +
             "4. do-what-it-says.  Get's Backstreet Boys song 'I Want It That Way' from text file and Spotify's It." +
             "\r\n\n" +
-            "Be sure to put the movie or song name in quotation marks if it's more than one word."
+            "Be sure to put the movie or song name in quotation marks if it's more than one word." +
+            "\r\n\n" +
+            "All searches are appended (written) to a log.txt file"
         );
 }
 
@@ -60,9 +61,9 @@ function getTweets() {
         response
     ) {
         if (!error) {
-            console.log(`The Latest 20 Tweets for ${twitterUsername} are\n`);
+            console.log(`The Latest 10 Tweets for ${twitterUsername} are\n`);
 
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 10; i++) {
                 var tweet =
                     "********************************** \n\n" +
                     "DATE: " + tweets[i].created_at + "\n" +
@@ -86,14 +87,14 @@ function getSong(songFromTxtFile) {
     spotKeys.search({
         type: "track",
         query: songToSearch,
-        limit: 15
+        limit: 5
     }, function (err, data) {
         if (err) {
             return console.log("Error occurred: " + err);
         }
         // console.log(data.tracks.items);
         // console.log(data.tracks.items[0].artists);
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 5; i++) {
             var songInfo = data.tracks.items;
             var artistArrayDataResponse = data.tracks.items[0].artists;
             var artistFoundInDataResponse = [];
@@ -149,7 +150,11 @@ function getMovie() {
                 "AWARDS: " + mRes.Awards + "\n\n" +
                 "--------------------------------------------------------";
             console.log(movieOutput);
-            logdata(movieOutput);
+            logdata(
+                "This is beginning of the log a new search\n\n" +
+                movieOutput + "\n\n" +
+                "This is end of the log a new search\n" +
+                "*****************************************************************************************\n\n"            );
         } else
             console.log("error:", error, response.statusCode); // Print the error if one occurred
     });
