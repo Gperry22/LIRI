@@ -6,13 +6,15 @@ var keys = require("./keys.js");
 var Twitter = require("twitter");
 var Spotify = require("node-spotify-api");
 var request = require("request");
-var fs = require("fs"); //reads and writes files
-var liriArguement = process.argv[2];
+var fs = require("fs");
 
+var liriArguement = process.argv[2];
+var songEntered = process.argv[3];
 var spotKeys = new Spotify(keys.spotify);
 var twitKeys = new Twitter(keys.twitter);
-// var omdbKeys = new OMDB(keys.omdb);
+var omdbKeys = keys.omdb.apikey;
 
+//Switch statement
 switch (liriArguement) {
     case "my-tweets":
         getTweets();
@@ -30,15 +32,15 @@ switch (liriArguement) {
         console.log(
             "\r\n" +
             "Try typing one of the following commands after 'node liri.js' : " +
-            "\r\n" +
-            "1. my-tweets  and 'any twitter name' " +
-            "\r\n" +
-            "2. spotify-this-song  and 'any song name' " +
-            "\r\n" +
-            "3. movie-this  and 'any movie name' " +
-            "\r\n" +
-            "4. do-what-it-says." +
-            "\r\n" +
+            "\r\n\n" +
+            "1. my-tweets  and 'any twitter name'. The default Twitter is @Philadelphia Eagles " +
+            "\r\n\n" +
+            "2. spotify-this-song  and 'any song name'. The default Song is Unforgettable by French Montana & Swae Lee. " +
+            "\r\n\n" +
+            "3. movie-this  and 'any movie name'. The default Movie is Mr. Nobody. " +
+            "\r\n\n" +
+            "4. do-what-it-says.  Get's Backstreet Boys song 'I Want It That Way' from text file and Spotify's It." +
+            "\r\n\n" +
             "Be sure to put the movie or song name in quotation marks if it's more than one word."
         );
 }
@@ -46,13 +48,6 @@ switch (liriArguement) {
 
 // Tweet function, uses the Twitter module to call the Twitter api
 function getTweets() {
-    // var client = new Twitter({
-    // 	consumer_key: keys.twitter.consumer_key,
-    // 	consumer_secret: keys.twitter.consumer_secret,
-    // 	access_token_key: keys.twitter.access_token_key,
-    // 	access_token_secret: keys.twitter.access_token_secret,
-    // });
-    // var client = keys.twitter;
     var twitterUsername = process.argv[3];
     if (!twitterUsername) {
         twitterUsername = "Eagles";
@@ -74,16 +69,21 @@ function getTweets() {
                     "DATE: " + tweets[i].created_at + "\n" +
                     "TWEET: " + tweets[i].text + "\n";
                 console.log(tweet);
+                logdata(tweet);
             }
         } else console.log("Error :" + error);
     });
 }
 
+
+
 //Spotify Function 
-function getSong() {
-    var songToSearch = process.argv[3];
-    if (!songToSearch) {
-        songToSearch = "I Want it That Way";
+function getSong(songFromTxtFile) {
+    var songToSearch = songEntered;
+    if (!songToSearch && songFromTxtFile) {
+        songToSearch = songFromTxtFile;
+    } else if (!songToSearch && !songFromTxtFile) {
+        songToSearch = "Unforgettable";
     }
     spotKeys.search({
         type: "track",
@@ -103,7 +103,7 @@ function getSong() {
             if (songInfo[i].preview_url === null) {
                 songUrl = "There is no Preview URL!";
             } else songUrl = songInfo[i].preview_url;
-            
+
             for (let j = 0; j < artistArrayDataResponse.length; j++) {
                 if (artistArrayDataResponse[j].hasOwnProperty("name")) {
                     artistFoundInDataResponse.push(artistArrayDataResponse[j].name)
@@ -117,6 +117,7 @@ function getSong() {
                 "Album: " + songInfo[i].name + "\n\n" +
                 "Preview Url: " + songUrl;
             console.log(songResults);
+            logdata(songResults);
         }
     });
 }
@@ -127,13 +128,13 @@ function getMovie() {
     if (!movieToSearch) {
         movieToSearch = "Mr. Nobody";
     }
-    var queryUrl = "http://www.omdbapi.com/?i=tt3896198&t=" + movieToSearch + "&apikey=54cc6259";
+    var queryUrl = "http://www.omdbapi.com/?i=tt3896198&t=" + movieToSearch + "&apikey=" + omdbKeys;
     request(queryUrl, function (error, response, body) {
 
         if (!error && response.statusCode === 200) {
             var mRes = JSON.parse(body)
             var rottenTomatoesRating = "";
-            console.log("body:", mRes);
+            // console.log("body:", mRes);
             if (mRes.hasOwnProperty(mRes.Ratings[1])) {
                 rottenTomatoesRating = mRes.Ratings[1].Value;
             } else rottenTomatoesRating = "No Rotten Tomatoes Rating Found";
@@ -149,7 +150,45 @@ function getMovie() {
                 "AWARDS: " + mRes.Awards + "\n\n" +
                 "--------------------------------------------------------";
             console.log(movieOutput);
+            logdata(movieOutput);
         } else
             console.log("error:", error, response.statusCode); // Print the error if one occurred
     });
+}
+
+//Read from Txt file function
+function doWhatItSays() {
+    // This block of code will read from the "random.txt" file.
+    // It's important to include the "utf8" parameter or the code will provide stream data (garbage)
+    // The code will store the contents of the reading inside the variable "data"
+    fs.readFile("./random.txt", "utf8", function (error, data) {
+
+        // If the code experiences any errors it will log the error to the console.
+        if (error) {
+            return console.log(error);
+        }
+        // We will then print the contents of data
+        // console.log(data);
+        // Then split it by commas (to make it more readable)
+        var dataArr = data.split(",");
+        var songFromTxtFile = dataArr[1];
+        // console.log(songFromTxtFile);
+        getSong(songFromTxtFile);
+    });
+}
+
+
+
+
+// Log to log.txt file
+
+function logdata(data) {
+
+    fs.appendFile("log.txt", data, function (error) {
+
+        if (error) {
+            console.log(error);
+        }
+
+    })
 }
